@@ -7,10 +7,11 @@ def load_categories():
 
 def load_products(cate_id=None, kw=None):
     prods = Product.query
-
+    
     if kw:
         prods = prods.filter(Product.name.contains(kw))
 
     if cate_id:
         prods = prods.filter(Product.category_id == cate_id)
+
     return prods.all()

@@ -1,4 +1,4 @@
-from app import app, db
+from __init__ import app, db
 from sqlalchemy import Column, String, Integer, Float, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -22,6 +22,11 @@ class Product(db.Model):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        # c1 = Category(name="Mobile")
+        # c2 = Category(name="Tablet")
+        # c3 = Category(name="Laptop")
+        # db.session.add_all([c1, c2, c3])
+        db.session.commit()
         products = [{
             "id": 1,
             "name": "iPhone 7 Plus",
@@ -77,8 +82,3 @@ if __name__ == "__main__":
         for p in products:
             db.session.add(Product(**p))
         db.session.commit()
-        # c1 = Category(name="Mobile")
-        # c2 = Category(name="Tablet")
-        # c3 = Category(name="Laptop")
-        # db.session.add_all([c1, c2, c3])
-        # db.session.commit()

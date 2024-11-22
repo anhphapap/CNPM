@@ -1,27 +1,25 @@
-{% extends 'layout/base.html'%}
-
-{% block content %}
+{% extends 'layout/base.html'%} {% block content %}
 <div class="row">
-    {% if products %}
-    {% for p in products %}
-    <div class="col-md-3 p-2">
-        <div class="card">
-            <img class="card-img-top" src="{{p.image}}" alt="{{p.name   }}">
-            <div class="card-body">
-                <h4 class="card-title">{{p.name}}</h4>
-                <p class="card-text">{{p.price}}</p>
-                <a href="#" class="btn btn-primary">Xem chi tiết</a>
-                <button class="btn btn-danger">Thêm vào giỏ hàng</button>
-            </div>
-        </div>
+  {% if products %} {% for p in products %}
+  <div class="col-md-3 p-2">
+    <div class="card">
+      <img class="card-img-top" src="{{p.image}}" alt="{{p.name}}" />
+      <div class="card-body">
+        <h4 class="card-title">{{p.name}}</h4>
+        <p class="card-text">{{p.price}}</p>
+        <a href="#" class="btn btn-primary">Xem chi tiết</a>
+        <button class="btn btn-danger">Thêm vào giỏ hàng</button>
+      </div>
     </div>
-    {% endfor %}
-    {% else %}
-    <div class="alert alert-info mt-2">Không có sp nào !!!</div>
-    {% endif %}
+  </div>
+  {% endfor %} {% else %}
+  <div class="alert alert-info mt-2">Không có sp nào !!!</div>
+  {% endif %}
 </div>
+{% if pages > 1 %}
 <ul class="pagination">
-  <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+  {% for i in range(1, pages+1) %}
+  <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+  {% endfor %}
 </ul>
-{% endblock %}
-
+{% endif%} {% endblock %}

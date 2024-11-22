@@ -17,14 +17,14 @@
                 {% if current_user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="/">
-                        <img src="{{ current_user.avatar }}" width="25" class="rounded_circle">
+                        <img src="{{ current_user.avatar }}" width="25" class="rounded_circle"/>
                         Hello {{ current_user.name }} !
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Logout</a>
+                    <a class="nav-link" href="/logout">Logout</a>
                 </li>
-                {% elif %}
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="/login">Login</a>
                 </li>

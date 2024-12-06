@@ -23,7 +23,10 @@ class User(db.Model, UserMixin):
 class Category(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), unique=True)
-    product = relationship("Product", backref="category", lazy=True)
+    products = relationship("Product", backref="category", lazy=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(db.Model):
@@ -39,16 +42,16 @@ class Product(db.Model):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        # import hashlib
-        # pwd = str(hashlib.md5("123456".encode('utf-8').strip()).hexdigest())
-        # u = User(name='admin',  username='admin', password=pwd, user_role=UserRole.USER)
-        # db.session.add(u)
-        # db.session.commit()
-        # c1 = Category(name="Mobile")
-        # c2 = Category(name="Tablet")
-        # c3 = Category(name="Laptop")
-        # db.session.add_all([c1, c2, c3])
-        # db.session.commit()
+        import hashlib
+        pwd = str(hashlib.md5("123456".encode('utf-8').strip()).hexdigest())
+        u = User(name='admin',  username='admin', password=pwd, user_role=UserRole.USER)
+        db.session.add(u)
+        db.session.commit()
+        c1 = Category(name="Mobile")
+        c2 = Category(name="Tablet")
+        c3 = Category(name="Laptop")
+        db.session.add_all([c1, c2, c3])
+        db.session.commit()
         products = [{
             "id": 7,
             "name": "iPhone 7 Plus",

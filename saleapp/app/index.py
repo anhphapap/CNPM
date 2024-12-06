@@ -1,8 +1,10 @@
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, jsonify, session
 import dao
+import utils
 import math
 from __init__ import app, login_manager
 from flask_login import login_user, logout_user
+from models import UserRole
 
 
 @app.route("/")
@@ -34,6 +36,16 @@ def login():
     return render_template("login.html", err=err_msg)
 
 
+@app.route("/admin-login", methods=['post'])
+def admin_login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    u = dao.auth_user(username=username, password=password, role=UserRole.ADMIN)
+    if u:
+        login_user(u)
+    return redirect("/admin")
+
+
 @app.route("/logout")
 def logout():
     logout_user()
@@ -45,7 +57,7 @@ def get_user_by_id(user_id):
     return dao.get_user_by_id(user_id)
 
 
-@app.route("/register", methods=['get','post'])
+@app.route("/register", methods=['get', 'post'])
 def register():
     err_msg = None
     if request.method.__eq__('POST'):
@@ -62,15 +74,43 @@ def register():
                 err_msg = 'Something is wrong please try again'
         else:
             err_msg = 'Password incorrect'
-    return render_template("register.html", err = err_msg)
+    return render_template("register.html", err=err_msg)
+
+
+@app.route('/api/add-cart', methods=['post'])
+def add_to_cart():
+    id = str(request.json.get('id'))
+    name = request.json.get('name')
+    price = request.json.get('price')
+
+    cart = session.get('cart')
+
+    if not cart:
+        cart = {}
+
+    if id in cart:
+        cart[id]['quantity'] += 1
+    else:
+        cart[id] = {
+            'id': id,
+            'name': name,
+            'price': price,
+            'quantity': 1
+        }
+
+    session['cart'] = cart
+    print(utils.cal_cart(cart))
+    return jsonify(utils.cal_cart(cart))
 
 
 @app.context_processor
 def common_context_param():
     return {
-        'categories' : dao.load_categories()
+        'categories': dao.load_categories(),
+        'cart-stats': utils.cal_cart(session.get('cart'))
     }
 
 
 if __name__ == '__main__':
+    from admin import admin
     app.run(debug=True)

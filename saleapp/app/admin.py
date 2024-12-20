@@ -4,6 +4,7 @@ from flask_admin import Admin, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, logout_user
 from flask import redirect
+import dao
 
 admin = Admin(app=app, name='Sale', template_mode='bootstrap4')
 
@@ -38,7 +39,7 @@ class LogoutView(Authenticated):
 class StatsView(Authenticated):
     @expose('/')
     def index(self):
-        return self.render("/admin/stats.html")
+        return self.render('admin/stats.html', stats=dao.revenue_stats())
 
 
 admin.add_view(AdminView(User, db.session))

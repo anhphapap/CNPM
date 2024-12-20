@@ -1,10 +1,11 @@
 def cal_cart(cart):
-    total_amount = 0
+    total_counter = 0
     total_price = 0
 
-    for x in cart.values():
-        total_amount += x['quantity']
-        total_price += x['quantity'] * x['price']
+    if cart:
+        for x in cart.values():
+            total_counter += x['quantity']
+            total_price += x['quantity'] * x['price']
 
-    return {'total_amount': total_amount,
+    return {'total_counter': total_counter,
             'total_price': total_price}

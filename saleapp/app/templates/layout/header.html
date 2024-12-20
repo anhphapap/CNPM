@@ -15,7 +15,7 @@
                 </li>
                 {% endfor %}
                 <li class="nav-item">
-                    <a class="nav-link active" href="/cart">&#128722;<span class="badge bg-danger" id="cart-counter">{{cart-stats.total_amount}}</span></a>
+                    <a class="nav-link active" href="/cart">&#128722;<span class="badge bg-danger cart-counter">{{cart_stats.total_counter}}</span></a>
                 </li>
                 {% if current_user.is_authenticated %}
                 <li class="nav-item">

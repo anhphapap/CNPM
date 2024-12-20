@@ -1,8 +1,10 @@
 import cloudinary.uploader
-from models import Category, Product, User
+from models import Category, Product, User, ReceiptDetails, Receipt
 from __init__ import app, db
 import hashlib
 import cloudinary
+from flask_login import current_user
+from sqlalchemy import func
 
 
 def load_categories():
@@ -57,3 +59,21 @@ def add_user(name, username, password, avatar=None):
         u.avatar = res.get('secure_url')
     db.session.add(u)
     db.session.commit()
+
+
+def add_receipt(cart):
+    if cart:
+        r = Receipt(user=current_user)
+        db.session.add(r)
+
+        for c in cart.values():
+            d = ReceiptDetails(quantity=c['quantity'], unit_price=c['price'],
+                               receipt=r, product_id=c['id'])
+            db.session.add(d)
+
+        db.session.commit()
+
+
+def revenue_stats():
+    return db.session.query(Product.id, Product.name, func.sum(ReceiptDetails.quantity * ReceiptDetails.unit_price))\
+                     .join(ReceiptDetails, ReceiptDetails.product_id.__eq__(Product.id)).group_by(Product.id).all()

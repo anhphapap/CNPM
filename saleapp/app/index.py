@@ -30,7 +30,9 @@ def login():
         u = dao.auth_user(username=username, password=password)
         if u:
             login_user(u)
-            return redirect("/")
+
+            next = request.args.get('next')
+            return redirect(next if next else '/')
         else:
             err_msg = "Password or username incorrect !!!"
     return render_template("login.html", err=err_msg)
@@ -77,6 +79,11 @@ def register():
     return render_template("register.html", err=err_msg)
 
 
+@app.route('/cart')
+def cart():
+    return render_template('cart.html')
+
+
 @app.route('/api/add-cart', methods=['post'])
 def add_to_cart():
     id = str(request.json.get('id'))
@@ -103,11 +110,47 @@ def add_to_cart():
     return jsonify(utils.cal_cart(cart))
 
 
+@app.route("/api/carts/<product_id>", methods=['put'])
+def update_cart(product_id):
+    cart = session.get('cart')
+
+    if cart and product_id in cart:
+        quantity = int(request.json.get('quantity', 0))
+        cart[product_id]['quantity'] = quantity
+
+    session['cart'] = cart
+
+    return jsonify(utils.cal_cart(cart))
+
+
+@app.route('/api/carts/<product_id>', methods=['delete'])
+def delete_cart(product_id):
+    cart = session.get('cart')
+
+    if cart and product_id in cart:
+        del cart[product_id]
+
+    session['cart'] = cart
+
+    return jsonify(utils.cal_cart(cart))
+
+
+@app.route('/api/pay', methods=['post'])
+def pay():
+    try:
+        dao.add_receipt(session.get('cart'))
+    except:
+        return jsonify({'status': 500})
+    else:
+        del session['cart']
+        return jsonify({'status': 200})
+
+
 @app.context_processor
 def common_context_param():
     return {
         'categories': dao.load_categories(),
-        'cart-stats': utils.cal_cart(session.get('cart'))
+        'cart_stats': utils.cal_cart(session.get('cart'))
     }
 
 
